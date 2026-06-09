@@ -5,10 +5,15 @@ node_modules/
 build/
 
 # environment variables
+.env
 .env.local
 .env.development.local
 .env.test.local
 .env.production.local
+
+# private / local only
+.claude/
+design_prompts/
 
 # logs
 npm-debug.log*
