@@ -27,7 +27,7 @@ export default function Navbar() {
     >
       <div className="container navbar-inner">
         <Link to="/" className="logo">
-          <img src="/LOGO.png" alt="SafeLoad AI" className="logo-img" />
+          <img src="/safeload-lockup-reversed.svg" alt="SafeLoad AI" className="logo-img" />
         </Link>
 
         <nav className="nav-links">

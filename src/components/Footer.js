@@ -11,7 +11,7 @@ export default function Footer() {
           {/* Brand */}
           <div className="footer-brand">
             <Link to="/" className="logo" style={{ marginBottom: 12, display: 'inline-flex' }}>
-              <img src="/LOGO.png" alt="SafeLoad AI" className="logo-img" />
+              <img src="/safeload-lockup-reversed.svg" alt="SafeLoad AI" className="logo-img" />
             </Link>
             <p className="footer-tagline">Real-time custody verification for freight</p>
           </div>
