@@ -1,6 +1,6 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { Link } from 'react-router-dom';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion } from 'framer-motion';
 
 const fadeUp = (delay = 0) => ({
   initial: { opacity: 0, y: 28 },
@@ -74,11 +74,13 @@ function AlertIcon() {
   );
 }
 
-const gaps = [
-  { Icon: PhoneIcon, title: 'Phone Calls',                desc: 'Unverified verbal confirmations' },
-  { Icon: DocIcon,   title: 'Paperwork',                  desc: 'Easily forged or misread documents' },
-  { Icon: RouteIcon, title: 'Dispatch Info',              desc: 'Assumed to be accurate' },
-  { Icon: IdIcon,    title: 'Unverified Driver Identity', desc: 'No real-time confirmation' },
+const industryErrors = [
+  { title: 'No driver identity verification at pickup',     detail: 'Anyone with load info can claim a shipment' },
+  { title: 'Phone calls used to confirm custody',           detail: 'Verbal confirmations are unverifiable and easily spoofed' },
+  { title: 'Paperwork is easily forged or misread',         detail: 'BOLs and dispatch sheets offer no real protection' },
+  { title: 'Dispatch info assumed to be accurate',          detail: 'No cross-check between the driver and the load' },
+  { title: 'Double brokering goes undetected',              detail: 'Loads re-brokered without shipper knowledge' },
+  { title: 'No geolocation confirmation at handoff',        detail: 'Driver location at pickup is never verified' },
 ];
 
 const pillars = [
@@ -101,64 +103,6 @@ const benefits = [
   { Icon: DocIcon,    title: 'Industry Shift & Legal Exposure',         desc: 'Court decisions demand a verifiable chain of custody.' },
 ];
 
-function GapCarousel() {
-  const [active, setActive] = useState(0);
-  const [dir, setDir] = useState(1);
-
-  const go = (next) => {
-    setDir(next > active ? 1 : -1);
-    setActive(next);
-  };
-
-  const prev = () => go((active - 1 + gaps.length) % gaps.length);
-  const next = () => go((active + 1) % gaps.length);
-
-  const { Icon, title, desc } = gaps[active];
-
-  return (
-    <div style={{ marginBottom: 32 }}>
-      <div style={{ position: 'relative', overflow: 'hidden', borderRadius: 14 }}>
-        <AnimatePresence mode="wait" custom={dir}>
-          <motion.div
-            key={active}
-            custom={dir}
-            initial={{ opacity: 0, x: dir * 60 }}
-            animate={{ opacity: 1, x: 0 }}
-            exit={{ opacity: 0, x: dir * -60 }}
-            transition={{ duration: 0.35, ease: 'easeInOut' }}
-            className="gap-card"
-            style={{ minHeight: 160, display: 'flex', flexDirection: 'column', justifyContent: 'center' }}
-          >
-            <div className="gap-card-icon"><Icon /></div>
-            <div className="gap-card-title" style={{ marginTop: 12 }}>{title}</div>
-            <div className="gap-card-subtitle">{desc}</div>
-          </motion.div>
-        </AnimatePresence>
-      </div>
-
-      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 16, marginTop: 20 }}>
-        <button onClick={prev} style={arrowBtn}>‹</button>
-        <div style={{ display: 'flex', gap: 8 }}>
-          {gaps.map((_, i) => (
-            <button key={i} onClick={() => go(i)} style={{
-              width: i === active ? 20 : 8, height: 8, borderRadius: 4, border: 'none', cursor: 'pointer',
-              background: i === active ? 'var(--accent)' : 'var(--border-light)',
-              transition: 'all 0.25s',
-              padding: 0,
-            }} />
-          ))}
-        </div>
-        <button onClick={next} style={arrowBtn}>›</button>
-      </div>
-    </div>
-  );
-}
-
-const arrowBtn = {
-  background: 'var(--bg-card)', border: '1px solid var(--border-light)', color: 'var(--text-primary)',
-  width: 36, height: 36, borderRadius: 8, cursor: 'pointer', fontSize: 20, lineHeight: 1,
-  display: 'flex', alignItems: 'center', justifyContent: 'center',
-};
 
 export default function OurSolution() {
   return (
@@ -184,7 +128,7 @@ export default function OurSolution() {
         </div>
       </section>
 
-      {/* ── Problem (Carousel) ── */}
+      {/* ── Problem ── */}
       <section className="custody-gap" style={{ padding: '100px 0' }}>
         <div className="container">
           <motion.div {...fadeUp()}>
@@ -193,7 +137,35 @@ export default function OurSolution() {
               Pickup — the moment responsibility changes hands — still relies on assumed trust.
             </p>
           </motion.div>
-          <GapCarousel />
+
+          <motion.div
+            style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: 12, marginBottom: 32 }}
+            variants={stagger} initial="hidden" whileInView="visible" viewport={{ once: true, margin: '-60px' }}
+          >
+            {industryErrors.map(({ title, detail }) => (
+              <motion.div key={title} variants={child} style={{
+                background: 'rgba(251, 113, 33, 0.07)',
+                border: '1px solid rgba(251, 113, 33, 0.25)',
+                borderRadius: 12,
+                padding: '18px 20px',
+                display: 'flex',
+                gap: 14,
+                alignItems: 'flex-start',
+              }}>
+                <span style={{
+                  flexShrink: 0, width: 22, height: 22, borderRadius: '50%',
+                  background: 'rgba(251,113,33,0.15)', border: '1px solid rgba(251,113,33,0.4)',
+                  display: 'flex', alignItems: 'center', justifyContent: 'center',
+                  fontSize: 13, fontWeight: 700, color: '#fb7121', marginTop: 1,
+                }}>✕</span>
+                <div>
+                  <div style={{ fontSize: 14, fontWeight: 600, color: 'var(--text-primary)', marginBottom: 4 }}>{title}</div>
+                  <div style={{ fontSize: 13, color: 'var(--text-muted)' }}>{detail}</div>
+                </div>
+              </motion.div>
+            ))}
+          </motion.div>
+
           <motion.div className="gap-banner" {...fadeUp(0.1)}>
             Freight fraud and cargo theft continue rising across high-value freight lanes.
           </motion.div>
