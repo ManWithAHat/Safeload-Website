@@ -1,6 +1,6 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { motion } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
 
 const fadeUp = (delay = 0) => ({
   initial: { opacity: 0, y: 28 },
@@ -101,6 +101,65 @@ const benefits = [
   { Icon: DocIcon,    title: 'Industry Shift & Legal Exposure',         desc: 'Court decisions demand a verifiable chain of custody.' },
 ];
 
+function GapCarousel() {
+  const [active, setActive] = useState(0);
+  const [dir, setDir] = useState(1);
+
+  const go = (next) => {
+    setDir(next > active ? 1 : -1);
+    setActive(next);
+  };
+
+  const prev = () => go((active - 1 + gaps.length) % gaps.length);
+  const next = () => go((active + 1) % gaps.length);
+
+  const { Icon, title, desc } = gaps[active];
+
+  return (
+    <div style={{ marginBottom: 32 }}>
+      <div style={{ position: 'relative', overflow: 'hidden', borderRadius: 14 }}>
+        <AnimatePresence mode="wait" custom={dir}>
+          <motion.div
+            key={active}
+            custom={dir}
+            initial={{ opacity: 0, x: dir * 60 }}
+            animate={{ opacity: 1, x: 0 }}
+            exit={{ opacity: 0, x: dir * -60 }}
+            transition={{ duration: 0.35, ease: 'easeInOut' }}
+            className="gap-card"
+            style={{ minHeight: 160, display: 'flex', flexDirection: 'column', justifyContent: 'center' }}
+          >
+            <div className="gap-card-icon"><Icon /></div>
+            <div className="gap-card-title" style={{ marginTop: 12 }}>{title}</div>
+            <div className="gap-card-subtitle">{desc}</div>
+          </motion.div>
+        </AnimatePresence>
+      </div>
+
+      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 16, marginTop: 20 }}>
+        <button onClick={prev} style={arrowBtn}>‹</button>
+        <div style={{ display: 'flex', gap: 8 }}>
+          {gaps.map((_, i) => (
+            <button key={i} onClick={() => go(i)} style={{
+              width: i === active ? 20 : 8, height: 8, borderRadius: 4, border: 'none', cursor: 'pointer',
+              background: i === active ? 'var(--accent)' : 'var(--border-light)',
+              transition: 'all 0.25s',
+              padding: 0,
+            }} />
+          ))}
+        </div>
+        <button onClick={next} style={arrowBtn}>›</button>
+      </div>
+    </div>
+  );
+}
+
+const arrowBtn = {
+  background: 'var(--bg-card)', border: '1px solid var(--border-light)', color: 'var(--text-primary)',
+  width: 36, height: 36, borderRadius: 8, cursor: 'pointer', fontSize: 20, lineHeight: 1,
+  display: 'flex', alignItems: 'center', justifyContent: 'center',
+};
+
 export default function OurSolution() {
   return (
     <>
@@ -125,7 +184,7 @@ export default function OurSolution() {
         </div>
       </section>
 
-      {/* ── Problem ── */}
+      {/* ── Problem (Carousel) ── */}
       <section className="custody-gap" style={{ padding: '100px 0' }}>
         <div className="container">
           <motion.div {...fadeUp()}>
@@ -134,16 +193,7 @@ export default function OurSolution() {
               Pickup — the moment responsibility changes hands — still relies on assumed trust.
             </p>
           </motion.div>
-          <motion.div className="gap-cards"
-            variants={stagger} initial="hidden" whileInView="visible" viewport={{ once: true, margin: '-60px' }}>
-            {gaps.map(({ Icon, title, desc }) => (
-              <motion.div key={title} className="gap-card" variants={child} whileHover={{ y: -3 }}>
-                <div className="gap-card-icon"><Icon /></div>
-                <div className="gap-card-title">{title}</div>
-                <div className="gap-card-subtitle">{desc}</div>
-              </motion.div>
-            ))}
-          </motion.div>
+          <GapCarousel />
           <motion.div className="gap-banner" {...fadeUp(0.1)}>
             Freight fraud and cargo theft continue rising across high-value freight lanes.
           </motion.div>
@@ -184,7 +234,7 @@ export default function OurSolution() {
               Verification requirements adjust automatically based on real-world risk signals.
             </p>
           </motion.div>
-          <motion.div className="sol-pillars-grid"
+          <motion.div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 16, marginBottom: 24 }}
             variants={stagger} initial="hidden" whileInView="visible" viewport={{ once: true, margin: '-60px' }}>
             {riskTiers.map(({ dot, label, title, outcome, bg, border }) => (
               <motion.div key={title} className="sol-pillar-card" variants={child} whileHover={{ y: -3 }}
